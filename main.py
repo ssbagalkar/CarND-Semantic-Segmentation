@@ -56,6 +56,47 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :return: The Tensor for the last layer of output
     """
     # TODO: Implement function
+    # Perform 1 x 1 conv for layer 7
+    conv_1x1_layer_7 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1,
+                                   padding='same',
+                                   kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+                                   kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    # Upsample the image
+    output_7 = tf.layers.conv2d_transpose(conv_1x1_layer_7, num_classes, 4,
+                                             strides=(2, 2),
+                                             padding='same',
+                                             kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+                                             kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+
+    # Perform 1 x 1 conv for layer 4
+    conv_1x1_layer_4 = tf.layers.conv2d(vgg_layer4_out, num_classes, 1,
+                                   padding='same',
+                                   kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+                                   kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    # Skip connection
+    output_4_skip = tf.add(output_7, conv_1x1_layer_4)
+
+    # Upsample the image layer 4
+    output_4 = tf.layers.conv2d_transpose(output_4_skip, num_classes, 4,
+                                            strides=(2, 2),
+                                            padding='same',
+                                            kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+                                            kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+
+    # Perform 1 x 1 conv for layer 3
+    conv_1x1_layer_3 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1,
+                                   padding='same',
+                                   kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+                                   kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+    # Skip connection
+    output_3_skip = tf.add(output_4, conv_1x1_layer_3)
+
+    # Upsample the image layer 4
+    final_layer = tf.layers.conv2d_transpose(output_3_skip, num_classes, 4,
+                                          strides=(2, 2),
+                                          padding='same',
+                                          kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+                                          kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
     return None
 tests.test_layers(layers)
 
