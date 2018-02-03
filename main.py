@@ -42,7 +42,7 @@ def load_vgg(sess, vgg_path):
     layer7_out = graph.get_tensor_by_name(vgg_layer7_out_tensor_name)
     return input, keep_prob, layer3_out, layer4_out, layer7_out
 
-print("VGG16 model is now loaded:")
+print("VGG16 model is now loaded....")
 tests.test_load_vgg(load_vgg, tf)
 
 
@@ -97,7 +97,8 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
                                           padding='same',
                                           kernel_initializer=tf.random_normal_initializer(stddev=0.01),
                                           kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
-    return None
+    return final_layer
+print("Layers defined...")
 tests.test_layers(layers)
 
 
